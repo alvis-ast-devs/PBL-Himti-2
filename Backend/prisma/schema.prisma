@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               Int              @id @default(autoincrement())
+  name             String
+  email            String           @unique
+  password_hash    String
+  role             String           @default("partner")
+  created_at       DateTime         @default(now())
+  
+  organization     Organization?
+  status_histories StatusHistory[]
+
+  @@map("users")
+}
+
+model Organization {
+  id                Int           @id @default(autoincrement())
+  user_id           Int           @unique
+  organization_name String
+  contact_person    String
+  phone             String
+  instagram         String?
+  
+  user              User          @relation(fields: [user_id], references: [id])
+  applications      Application[]
+
+  @@map("organizations")
+}
+
+model Application {
+  id              Int             @id @default(autoincrement())
+  organization_id Int
+  event_name      String
+  description     String?
+  date            DateTime?
+  location        String?
+  proposal_url    String?
+  deadline        DateTime?
+  status          String          @default("Draft")
+  admin_note      String?
+  
+  organization    Organization    @relation(fields: [organization_id], references: [id])
+  deliverables    Deliverable[]
+  status_histories StatusHistory[]
+
+  @@map("applications")
+}
+
+model Deliverable {
+  id                Int         @id @default(autoincrement())
+  application_id    Int
+  responsible_party String
+  title             String
+  status            String      @default("Pending")
+  evidence_url      String?
+  completed_at      DateTime?
+  
+  application       Application @relation(fields: [application_id], references: [id])
+
+  @@map("deliverables")
+}
+
+model StatusHistory {
+  id             Int         @id @default(autoincrement())
+  application_id Int
+  previous_status String?
+  new_status     String
+  note           String?
+  changed_by     Int
+  created_at     DateTime    @default(now())
+  
+  application    Application @relation(fields: [application_id], references: [id])
+  user           User        @relation(fields: [changed_by], references: [id])
+
+  @@map("status_histories")
+}
