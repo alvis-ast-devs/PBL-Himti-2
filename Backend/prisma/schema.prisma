@@ -44,6 +44,8 @@ model Application {
   date            DateTime?
   location        String?
   proposal_url    String?
+  target_audience      String?   
+  publication_requests String?  
   deadline        DateTime?
   status          String          @default("Draft")
   admin_note      String?
