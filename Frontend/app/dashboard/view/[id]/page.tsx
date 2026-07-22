@@ -16,15 +16,23 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
   const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
-    const stored = localStorage.getItem("mock_tickets");
-    if (stored) {
-      const tickets = JSON.parse(stored);
-      const found = tickets.find((t: any) => t.id.toString() === unwrappedParams.id);
-      if (found) {
-        setTicket(found);
+    const fetchTicket = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          setTicket({
+            ...json.data,
+            date: json.data.date ? new Date(json.data.date).toISOString().split('T')[0] : "N/A"
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+    fetchTicket();
   }, [unwrappedParams.id]);
 
   const handleAddComment = (e: React.FormEvent) => {

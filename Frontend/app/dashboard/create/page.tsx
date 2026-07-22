@@ -12,20 +12,26 @@ export default function CreateTicket() {
     description: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Save to local storage for mockup instant update
-    const existing = JSON.parse(localStorage.getItem("mock_tickets") || "[]");
-    const newTicket = {
-      id: Date.now(),
-      event_name: formData.event_name,
-      status: "PENDING",
-      date: new Date().toISOString().split('T')[0] // Automatically set to current day
-    };
-    
-    localStorage.setItem("mock_tickets", JSON.stringify([...existing, newTicket]));
-    router.push("/dashboard");
+    try {
+      const res = await fetch("http://localhost:5000/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event_name: formData.event_name,
+          location: formData.location,
+          description: formData.description,
+          date: new Date().toISOString()
+        })
+      });
+      if (res.ok) {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

@@ -7,29 +7,37 @@ export default function Dashboard() {
   const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string}[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Load from localStorage for mockup
-    const defaultTickets = [
-      { id: 1, event_name: "Annual Music Fest", status: "PENDING", date: "2026-08-15" },
-      { id: 2, event_name: "Tech Conference", status: "ACCEPTED", date: "2026-09-10" },
-      { id: 3, event_name: "Gaming Tournament", status: "DENIED", date: "2026-10-01" },
-      { id: 4, event_name: "Art Exhibition", status: "REVISION", date: "2026-11-20" },
-    ];
-    
-    const stored = localStorage.getItem("mock_tickets");
-    if (stored) {
-      setTickets(JSON.parse(stored));
-    } else {
-      setTickets(defaultTickets);
-      localStorage.setItem("mock_tickets", JSON.stringify(defaultTickets));
+  const fetchTickets = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/applications");
+      const json = await res.json();
+      if (json.success) {
+        const mapped = json.data.map((t: any) => ({
+          ...t,
+          date: t.date ? new Date(t.date).toISOString().split('T')[0] : "N/A"
+        }));
+        setTickets(mapped);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTickets();
   }, []);
 
-  const handleDelete = (id: number) => {
-    const updated = tickets.filter(t => t.id !== id);
-    setTickets(updated);
-    localStorage.setItem("mock_tickets", JSON.stringify(updated));
+  const handleDelete = async (id: number) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/applications/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setTickets(tickets.filter(t => t.id !== id));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) return null; // Prevent hydration mismatch

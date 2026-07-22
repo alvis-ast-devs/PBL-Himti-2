@@ -16,42 +16,40 @@ export default function EditTicket({ params }: { params: Promise<{ id: string }>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("mock_tickets");
-    if (stored) {
-      const tickets = JSON.parse(stored);
-      const ticket = tickets.find((t: any) => t.id.toString() === unwrappedParams.id);
-      if (ticket) {
-        setFormData({
-          event_name: ticket.event_name || "",
-          location: ticket.location || "",
-          description: ticket.description || "",
-        });
+    const fetchTicket = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          setFormData({
+            event_name: json.data.event_name || "",
+            location: json.data.location || "",
+            description: json.data.description || "",
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+    fetchTicket();
   }, [unwrappedParams.id]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const stored = localStorage.getItem("mock_tickets");
-    if (stored) {
-      let tickets = JSON.parse(stored);
-      tickets = tickets.map((t: any) => {
-        if (t.id.toString() === unwrappedParams.id) {
-          return {
-            ...t,
-            event_name: formData.event_name,
-            location: formData.location,
-            description: formData.description,
-          };
-        }
-        return t;
+    try {
+      const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
       });
-      localStorage.setItem("mock_tickets", JSON.stringify(tickets));
+      if (res.ok) {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
     }
-    
-    router.push("/dashboard");
   };
 
   if (loading) return null;
