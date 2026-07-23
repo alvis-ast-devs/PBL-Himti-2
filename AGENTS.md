@@ -158,33 +158,40 @@ Contoh: halaman partner membutuhkan perubahan format response dari endpoint auth
 - Tampilkan loading, error, dan empty state pada halaman yang mengambil data.
 - Jangan log password, token, atau data sensitif ke console.
 
-## 8. Sebelum push ke GitHub
+## 8. Sebelum merge ke main
 
-Sebelum melakukan `git push`, agent atau user harus:
+Sebelum melakukan merge ke `main`, agent atau user harus:
 
-1. Pull perubahan terbaru dari `main`:
+1. Pastikan fitur sudah selesai dan teruji.
+
+2. Pull perubahan terbaru dari `main`:
    ```bash
    git checkout main
    git pull origin main
    ```
 
-2. Kembali ke branch kerja dan merge `main`:
+3. Kembali ke branch kerja dan merge `main`:
    ```bash
    git checkout nama/branch-kamu
    git merge main
    ```
 
-3. Periksa apakah ada konflik:
+4. Periksa apakah ada konflik:
    - Jika ada konflik, selesaikan konflik terlebih dahulu
    - Jangan asal pilih "Accept Current" atau "Accept Incoming"
    - Baca kedua sisi perubahan dan pastikan kode tetap benar
 
-4. Test ulang setelah merge:
+5. Test ulang setelah merge:
    - Jalankan build: `npm run build`
    - Jalankan lint: `npm run lint`
    - Test fitur yang diubah
 
-5. Baru push setelah yakin tidak ada konflik dan build berhasil
+6. Baru merge ke `main` setelah yakin tidak ada konflik dan build berhasil:
+   ```bash
+   git checkout main
+   git merge nama/branch-kamu
+   git push origin main
+   ```
 
 ## 9. Sebelum menyatakan task selesai
 

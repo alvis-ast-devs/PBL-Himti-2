@@ -4,7 +4,7 @@
 
 - `main` harus selalu dalam kondisi yang dapat dijalankan.
 - Tidak ada anggota yang boleh commit langsung ke `main`.
-- Semua perubahan masuk melalui Pull Request.
+- Semua perubahan masuk melalui merge dari branch fitur setelah dicek tidak bertabrakan.
 
 ## 2. Nama branch
 
@@ -52,14 +52,32 @@ git push -u origin nama/feature-nama-fitur
 - Path separator: gunakan `/` atau `\` sesuai shell yang dipakai
 - Jika pakai PowerShell dan ada spasi di path, gunakan quotes: `git add "Frontend/app/page.tsx"`
 
-Setelah push:
+Sebelum merge ke `main`:
 
-1. Buat Pull Request ke `main`.
-2. Tulis ringkasan perubahan.
-3. Tulis cara mengetes.
-4. Sebutkan file shared atau lintas fitur yang berubah.
-5. Minta review minimal satu anggota lain.
-6. Merge setelah review dan pemeriksaan selesai.
+1. Pastikan fitur sudah selesai dan teruji.
+2. Pull perubahan terbaru dari `main`:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+3. Kembali ke branch fitur dan merge `main`:
+   ```bash
+   git checkout nama/feature-nama-fitur
+   git merge main
+   ```
+4. Selesaikan konflik jika ada.
+5. Test ulang: `npm run build` dan `npm run lint`.
+6. Jika tidak ada masalah, merge ke `main`:
+   ```bash
+   git checkout main
+   git merge nama/feature-nama-fitur
+   git push origin main
+   ```
+7. Hapus branch fitur (opsional):
+   ```bash
+   git branch -d nama/feature-nama-fitur
+   git push origin --delete nama/feature-nama-fitur
+   ```
 
 ## 4. Format commit
 
@@ -88,9 +106,9 @@ style(landing): improve mobile layout
 docs: update API contract
 ```
 
-## 5. Ukuran Pull Request
+## 5. Ukuran branch fitur
 
-Satu PR sebaiknya hanya memiliki satu tujuan utama.
+Satu branch sebaiknya hanya memiliki satu tujuan utama.
 
 Baik:
 
@@ -101,69 +119,35 @@ Baik:
 
 Kurang baik:
 
-- Membuat login, dashboard admin, mengganti database, dan merombak navbar dalam satu PR.
+- Membuat login, dashboard admin, mengganti database, dan merombak navbar dalam satu branch.
 
-PR kecil lebih mudah direview dan lebih sedikit konflik.
+Branch kecil lebih mudah di-merge dan lebih sedikit konflik.
 
-## 6. Isi deskripsi Pull Request
+## 6. Checklist sebelum merge ke main
 
-Gunakan format:
+Sebelum merge branch fitur ke `main`, pastikan:
 
-```markdown
-## Ringkasan
-Apa yang dibuat atau diperbaiki.
-
-## Owner
-Nama anggota dan fitur yang dimiliki.
-
-## File utama
-Daftar file penting yang berubah.
-
-## Cara mengetes
-1. Install dependencies:
-   ```bash
-   cd Frontend
-   npm install
-   cd ../Backend
-   npm install
-   ```
-2. Setup database:
-   ```bash
-   cd Backend
-   npx prisma migrate dev
-   npx prisma db seed  # jika ada seed
-   ```
-3. Jalankan backend: `npm run dev` (port 3000 atau sesuai .env)
-4. Jalankan frontend: `npm run dev` (port 3001 atau yang tersedia)
-5. Login sebagai ...
-6. Lakukan ...
-
-## Dampak ke fitur lain
-Tidak ada / jelaskan dampaknya.
-
-## Checklist
-- [ ] Hanya mengubah file yang diizinkan
+- [ ] Fitur sudah selesai dan berfungsi
+- [ ] Hanya mengubah file yang diizinkan sesuai feature ownership
 - [ ] Tidak ada password atau secret di commit
 - [ ] Tidak ada file `.env` yang ter-commit
-- [ ] Validasi backend tersedia
-- [ ] Loading, error, dan empty state ditangani
-- [ ] TypeScript tidak ada error: `npm run build` (Frontend)
+- [ ] Sudah pull dan merge `main` ke branch fitur
+- [ ] Konflik sudah diselesaikan (jika ada)
+- [ ] Build berhasil: `npm run build` (Frontend)
 - [ ] Lint passed: `npm run lint` (Frontend)
-```
+- [ ] Backend berjalan tanpa error
+- [ ] Fitur sudah ditest manual
+- [ ] Validasi backend tersedia
+- [ ] Loading, error, dan empty state ditangani (untuk frontend)
 
-## 7. Review
+## 7. Komunikasi tim
 
-Reviewer memeriksa:
+Walaupun tidak ada review wajib, tetap komunikasikan:
 
-- Apakah perubahan sesuai scope.
-- Apakah file yang diubah sesuai owner.
-- Apakah authorization benar.
-- Apakah API response tidak merusak fitur lain.
-- Apakah error ditangani.
-- Apakah terdapat secret atau password.
-- Apakah kode cukup mudah dibaca.
-
-Reviewer tidak perlu memaksakan gaya pribadi jika kode sudah jelas dan konsisten.
+- Jika mengubah file shared, beritahu di grup
+- Jika mengubah `prisma/schema.prisma`, koordinasi dulu
+- Jika mengubah contract API yang dipakai orang lain, diskusikan dulu
+- Jika ada bug di fitur orang lain, beritahu ownernya
 
 ## 8. Konflik merge
 
@@ -176,19 +160,20 @@ Jika terjadi konflik:
 
 ## 9. File yang tidak boleh di-commit
 
-- `.env`
+- `.env` (Backend dan Frontend)
 - Password database asli
 - JWT secret
-- `node_modules`
-- File build seperti `.next`
+- `node_modules/`
+- File build seperti `.next/`, `dist/`
 - Log lokal
 - Data pribadi nyata yang tidak dibutuhkan
+- Prisma migrations yang belum final (koordinasi dulu)
 
-Gunakan `.env.example` tanpa nilai rahasia.
+Gunakan `.env.example` tanpa nilai rahasia sebagai template.
 
-## 10. Sinkronisasi setelah PR orang lain masuk
+## 10. Sinkronisasi dengan main
 
-Sebelum melanjutkan branch lama:
+Sebelum melanjutkan branch lama atau sebelum merge ke main:
 
 ```bash
 git checkout main
@@ -205,14 +190,14 @@ Contoh: Olssen membutuhkan field baru dari auth Cecil.
 
 Prosesnya:
 
-1. Buat issue atau diskusikan contract API yang dibutuhkan.
+1. Diskusikan di grup: contract API atau perubahan yang dibutuhkan.
 2. Tentukan siapa yang mengubah file (biasanya owner file).
-3. Owner file melakukan perubahan atau memberi izin tertulis.
-4. Update dokumen jika contract API berubah.
-5. Merge perubahan dependency terlebih dahulu.
-6. Baru merge fitur yang bergantung padanya.
+3. Owner file melakukan perubahan di branch sendiri.
+4. Owner file merge ke `main` lebih dulu.
+5. Anggota lain pull `main` dan merge ke branch mereka.
+6. Baru lanjut mengerjakan fitur yang bergantung padanya.
 
 **Contoh kasus Prisma schema:**
 Jika Olssen perlu menambah field di model `Application`, dan Cecil perlu menambah field di model `User`, koordinasikan dulu agar tidak konflik saat migrate. Bisa dengan:
-- Membuat PR terpisah untuk perubahan schema
-- Atau salah satu menunggu PR yang lain merge dulu
+- Salah satu merge dulu, yang lain pull dan lanjut
+- Atau diskusikan untuk gabung perubahan schema dalam satu commit
