@@ -6,7 +6,7 @@ class ApplicationRepository {
     async getAllApplications(): Promise<ApplicationWithOrganization[]> {
         return prisma.application.findMany({
             include: { organization: true },
-            orderBy: { id: 'desc' },
+            orderBy: { id: 'asc' },
         });
     }
 

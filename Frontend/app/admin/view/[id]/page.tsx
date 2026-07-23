@@ -12,13 +12,11 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // State untuk komentar yang sekarang kosong di awal (akan diisi dari database)
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isPostingComment, setIsPostingComment] = useState(false);
 
   useEffect(() => {
-    // Fungsi untuk mengambil data tiket
     const fetchTicket = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`);
@@ -35,7 +33,6 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
       }
     };
 
-    // Fungsi BARU: Mengambil data komentar asli dari database
     const fetchComments = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}/comments`);
@@ -48,13 +45,11 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
       }
     };
 
-    // Jalankan kedua fungsi secara bersamaan
     Promise.all([fetchTicket(), fetchComments()]).finally(() => {
       setLoading(false);
     });
   }, [unwrappedParams.id]);
 
-  // Fungsi BARU: Mengirim komentar ke database
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -64,18 +59,13 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
       const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          user_id: 1, 
-          message: newComment,
-        })
+        body: JSON.stringify({ user_id: 1, message: newComment })
       });
-      
       const json = await res.json();
       
       if (res.ok && json.success) {
-        // Jika sukses, tambahkan komentar baru ke layar tanpa harus refresh halaman
         setComments([...comments, json.data]);
-        setNewComment(""); // Kosongkan kolom input
+        setNewComment("");
       } else {
         alert("Gagal mengirim pesan.");
       }
@@ -87,7 +77,6 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
     }
   };
 
-  // Fungsi untuk mengubah status tiket (tetap sama)
   const handleProcessTicket = async (newStatus: string) => {
     if (!confirm(`Anda yakin ingin mengubah status tiket ini menjadi ${newStatus}?`)) return;
     
@@ -115,154 +104,154 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
 
   if (!ticket) {
     return (
-      <main className="min-h-screen bg-neutral-900 text-white flex items-center justify-center">
+      <main className="min-h-screen bg-background text-ink flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">Ticket Not Found</h1>
-          <Link href="/admin" className="text-blue-400 hover:underline">Return to Control Panel</Link>
+          <Link href="/admin" className="text-brand hover:underline">Return to Control Panel</Link>
         </div>
       </main>
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     const s = status.toUpperCase();
-    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-500/20 text-green-400 border-green-500/50';
-    if (s === 'DENIED' || s === 'REJECTED') return 'bg-red-500/20 text-red-400 border-red-500/50';
-    if (s === 'REVISION') return 'bg-orange-500/20 text-orange-400 border-orange-500/50';
-    return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
+    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-100 text-green-800 border-green-200';
+    if (s === 'DENIED' || s === 'REJECTED') return 'bg-red-100 text-red-800 border-red-200';
+    if (s === 'REVISION') return 'bg-orange-100 text-orange-800 border-orange-200';
+    return 'bg-yellow-100 text-yellow-800 border-yellow-200';
   };
 
   return (
-    <main className="min-h-screen bg-neutral-900 text-white relative pb-12">
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-400">
-        <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+    <main className="min-h-screen bg-background text-ink pb-16">
+      
+      {/* Indikator Admin Mode */}
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-brand-light text-brand-dark px-4 py-1.5 rounded-full border border-line shadow-sm">
+        <div className="w-2 h-2 rounded-full bg-brand animate-pulse"></div>
         <span className="text-xs font-bold uppercase tracking-widest">Admin Review Mode</span>
       </div>
 
-      <div 
-        className="w-full h-72 flex items-center justify-center relative "
-        style={{ backgroundImage: "url('https://img.magnific.com/free-vector/stylish-glowing-digital-red-lines-banner_1017-23964.jpg?semt=ais_hybrid&w=740&q=80')" }}
-      >
-        <div className="absolute inset-0 bg-black/80"></div>
-        <h1 className="relative z-10 text-3xl sm:text-4xl font-bold uppercase tracking-wide text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">
-          TICKET REVIEW
-        </h1>
-      </div>
+      {/* Hero Section */}
+      <section className="border-b border-line bg-surface-soft py-12 sm:py-16 pt-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand mb-2">
+            Ticket Review
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl max-w-3xl">
+            {ticket.event_name}
+          </h1>
+        </div>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20 flex flex-col lg:flex-row gap-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
         
-        {/* KOLOM KIRI: Detail Tiket & Komentar */}
-        <div className="flex-1 space-y-6">
+        {/* KIRI: Detail & Diskusi */}
+        <div className="space-y-8">
           
-          <div className="bg-neutral-800 rounded-xl shadow-2xl border border-neutral-700 overflow-hidden">
-            <div className="p-4 sm:px-6 sm:py-4 border-b border-neutral-700 flex justify-between items-center bg-neutral-800/80">
-              <Link href="/admin" className="text-neutral-400 hover:text-white transition-colors text-sm font-semibold uppercase tracking-wider">
-                ← Back to Control Panel
+          {/* Card: Detail Tiket */}
+          <div className="rounded-2xl border border-line bg-card shadow-[0_12px_35px_rgba(0,74,130,0.07)] overflow-hidden">
+            <div className="p-4 sm:px-6 sm:py-4 border-b border-line flex flex-wrap gap-4 justify-between items-center bg-surface-soft/50">
+              <Link href="/admin" className="text-muted hover:text-brand transition-colors text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+                <span aria-hidden="true">←</span> Back to Panel
               </Link>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(ticket.status)}`}>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusStyle(ticket.status)}`}>
                 Current: {ticket.status}
               </span>
             </div>
 
-            <div className="p-4 sm:p-6 space-y-6">
-              <div>
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Event / Title</h3>
-                <p className="text-xl font-medium text-white">{ticket.event_name}</p>
-              </div>
-              
+            <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Submission Date</h3>
-                  <p className="text-sm text-white">{ticket.date}</p>
+                  <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-muted mb-1">Submission Date</h3>
+                  <p className="text-sm text-ink">{ticket.date}</p>
                 </div>
                 <div>
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Media / Location</h3>
-                  <p className="text-sm text-white">{ticket.location || "N/A"}</p>
+                  <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-muted mb-1">Media / Location</h3>
+                  <p className="text-sm text-ink">{ticket.location || "N/A"}</p>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Proposal Description</h3>
-                <div className="bg-neutral-900/50 rounded-lg p-4 border border-neutral-700 text-sm text-neutral-300 min-h-[120px]">
+                <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-muted mb-2">Proposal Description</h3>
+                <div className="rounded-xl border border-line bg-surface-soft p-5 text-sm leading-6 text-muted min-h-[120px]">
                   {ticket.description || "No description provided."}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Card: Komentar (Diskusi Tiket) */}
-          <div className="bg-neutral-800 rounded-xl shadow-2xl border border-neutral-700 overflow-hidden">
-            <div className="p-4 sm:px-6 sm:py-4 border-b border-neutral-700 bg-neutral-800/80 backdrop-blur-sm flex justify-between items-center">
-              <h2 className="text-lg font-semibold uppercase tracking-wide">Discussion</h2>
-              <span className="text-xs text-neutral-400 bg-neutral-900 px-2 py-1 rounded">Admin Channel</span>
+          {/* Card: Diskusi */}
+          <div className="rounded-2xl border border-line bg-card shadow-[0_12px_35px_rgba(0,74,130,0.07)] overflow-hidden">
+            <div className="p-4 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-surface-soft/50">
+              <h2 className="text-lg font-bold text-ink">Discussion</h2>
+              <span className="text-xs text-brand-dark bg-brand-light px-3 py-1 rounded-lg font-semibold tracking-wide">
+                Admin Channel
+              </span>
             </div>
             
-            <div className="p-4 sm:p-6 space-y-4">
-              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                
-                {/* Looping Komentar Asli dari Database */}
+            <div className="p-6 space-y-4">
+              <div className="space-y-4 mb-6 max-h-[350px] overflow-y-auto pr-2">
                 {comments.length === 0 ? (
-                  <p className="text-sm text-neutral-500 text-center italic py-4">Belum ada diskusi untuk tiket ini.</p>
+                  <p className="text-sm text-muted text-center italic py-8">Belum ada diskusi untuk tiket ini.</p>
                 ) : (
                   comments.map((comment, index) => {
-                    // Deteksi nama user (pakai nama relasi atau default)
                     const senderName = comment.user?.name || `User #${comment.user_id}`;
-                    // Cek apakah ini Admin (Misal ID 1 kita anggap Admin)
                     const isAdmin = comment.user_id === 1;
                     
                     return (
-                      <div key={comment.id || index} className={`rounded-lg p-4 border ${isAdmin ? 'bg-red-900/10 border-red-900/30' : 'bg-neutral-900 border-neutral-700'}`}>
+                      <div key={comment.id || index} className={`rounded-xl p-5 border ${isAdmin ? 'bg-brand-pale border-brand-light/50 ml-6' : 'bg-surface-soft border-line mr-6'}`}>
                         <div className="flex justify-between items-center mb-2">
-                          <span className={`font-semibold text-sm ${isAdmin ? 'text-red-400' : 'text-blue-400'}`}>
+                          <span className={`font-bold text-sm ${isAdmin ? 'text-brand-dark' : 'text-ink'}`}>
                             {isAdmin ? 'Admin (You)' : senderName}
                           </span>
-                          <span className="text-[10px] text-neutral-500">
+                          <span className="text-xs text-muted">
                             {new Date(comment.created_at).toLocaleDateString()}
                           </span>
                         </div>
-                        <p className="text-sm text-neutral-300">{comment.message}</p>
+                        <p className="text-sm leading-6 text-muted">{comment.message}</p>
                       </div>
                     );
                   })
                 )}
               </div>
 
-              <form onSubmit={handleAddComment} className="flex flex-col sm:flex-row gap-3">
+              <form onSubmit={handleAddComment} className="flex flex-col sm:flex-row gap-3 pt-2">
                 <input 
                   type="text" 
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   disabled={isPostingComment}
-                  placeholder="Kirim pesan ke user..."
-                  className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition-colors disabled:opacity-50"
+                  placeholder="Kirim instruksi atau catatan ke user..."
+                  className="flex-1 rounded-lg border border-line bg-background px-4 py-3 text-sm text-ink placeholder:text-muted focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors disabled:opacity-50"
                 />
                 <button 
                   type="submit"
                   disabled={isPostingComment || !newComment.trim()}
-                  className="bg-red-600 hover:bg-red-500 text-white px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors whitespace-nowrap disabled:opacity-50"
+                  className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand px-6 text-sm font-semibold text-black transition-colors hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50"
                 >
                   {isPostingComment ? 'Sending...' : 'Send Reply'}
                 </button>
               </form>
             </div>
           </div>
-
         </div>
 
-        {/* KOLOM KANAN: Panel Keputusan Admin */}
-        <div className="w-full lg:w-80 xl:w-96 bg-neutral-900 rounded-xl shadow-2xl border border-red-900/50 overflow-hidden h-fit flex flex-col">
-          <div className="p-4 border-b border-neutral-800 bg-neutral-950">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-red-400">Admin Decision Panel</h2>
+        {/* KANAN: Decision Panel */}
+        <div className="h-fit sticky top-24 rounded-2xl border border-line bg-card shadow-[0_12px_35px_rgba(0,74,130,0.07)] overflow-hidden">
+          <div className="p-4 sm:px-6 sm:py-4 border-b border-line bg-surface-soft/50">
+            <h2 className="text-sm font-bold uppercase tracking-[0.14em] text-ink">Decision Panel</h2>
           </div>
           
-          <div className="p-5 space-y-5">
+          <div className="p-6">
             {ticket.status.toUpperCase() === 'PENDING' ? (
-              <div className="space-y-3">
-                <p className="text-xs text-neutral-400 mb-4">Pilih keputusan akhir untuk pengajuan ini. Pastikan Anda telah memberikan instruksi di kolom diskusi jika meminta revisi.</p>
+              <div className="space-y-4">
+                <p className="text-sm leading-6 text-muted mb-4">
+                  Pilih keputusan akhir untuk pengajuan ini. Pastikan Anda telah memberikan instruksi di kolom diskusi jika meminta revisi.
+                </p>
+                
                 <button 
                   onClick={() => handleProcessTicket('APPROVED')}
                   disabled={isUpdating}
-                  className="w-full bg-green-600/20 hover:bg-green-600 text-green-500 hover:text-white border border-green-600/50 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all disabled:opacity-50"
+                  className="w-full inline-flex min-h-11 items-center justify-center rounded-lg bg-[#008A2E] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#006e25] disabled:opacity-50"
                 >
                   Approve Ticket
                 </button>
@@ -270,7 +259,7 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
                 <button 
                   onClick={() => handleProcessTicket('REVISION')}
                   disabled={isUpdating}
-                  className="w-full bg-orange-600/20 hover:bg-orange-600 text-orange-500 hover:text-white border border-orange-600/50 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all disabled:opacity-50"
+                  className="w-full inline-flex min-h-11 items-center justify-center rounded-lg bg-[#D97706] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#b46305] disabled:opacity-50"
                 >
                   Request Revision
                 </button>
@@ -278,19 +267,17 @@ export default function AdminViewTicket({ params }: { params: Promise<{ id: stri
                 <button 
                   onClick={() => handleProcessTicket('REJECTED')}
                   disabled={isUpdating}
-                  className="w-full bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-600/50 px-4 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition-all disabled:opacity-50"
+                  className="w-full inline-flex min-h-11 items-center justify-center rounded-lg bg-[#DC2626] px-6 text-sm font-semibold text-white transition-colors hover:bg-[#b91c1c] disabled:opacity-50"
                 >
                   Reject Ticket
                 </button>
               </div>
             ) : (
-              <div className="text-center py-4">
-                <div className="inline-block bg-neutral-800 border border-neutral-700 text-neutral-400 px-6 py-3 rounded-lg text-sm font-bold uppercase tracking-wider">
-                  Decision Finalized
+              <div className="text-center py-6">
+                <div className="inline-block rounded-xl border border-line bg-brand-pale px-6 py-4 text-sm leading-6 text-brand-dark">
+                  <strong>Decision Finalized:</strong>
+                  <p className="mt-1 text-muted text-xs">Tiket ini sudah diproses dan statusnya tidak dapat diubah lagi.</p>
                 </div>
-                <p className="text-xs text-neutral-500 mt-4">
-                  Tiket ini sudah diproses dan statusnya tidak dapat diubah lagi.
-                </p>
               </div>
             )}
           </div>

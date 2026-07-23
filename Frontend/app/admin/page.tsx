@@ -4,185 +4,146 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function AdminDashboard() {
-  const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string}[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTickets = async () => {
-    try {
-      // Pastikan port sesuai dengan backend-mu (tadi di backend kita pakai 3000, tapi di kode temanmu 5000. Sesuaikan ya!)
-      const res = await fetch("http://localhost:5000/api/applications");
-      const json = await res.json();
-      if (json.success) {
-        const mapped = json.data.map((t: any) => ({
-          ...t,
-          date: t.date ? new Date(t.date).toISOString().split('T')[0] : "N/A",
-          status: t.status || "PENDING" // Default jika kosong
-        }));
-        setTickets(mapped);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/applications");
+        const json = await res.json();
+        if (json.success && json.data) {
+          setTickets(json.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data tiket:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchTickets();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    if(!confirm("Yakin ingin menghapus tiket ini secara permanen?")) return;
-    try {
-      const res = await fetch(`http://localhost:5000/api/applications/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setTickets(tickets.filter(t => t.id !== id));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // 🌟 FITUR BARU KHUSUS ADMIN: Update Status Cepat
-  const handleUpdateStatus = async (id: number, newStatus: string) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/applications/${id}`, { 
-        method: 'PUT',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus })
-      });
-      if (res.ok) {
-        // Update tampilan langsung tanpa perlu refresh
-        setTickets(tickets.map(t => t.id === id ? { ...t, status: newStatus } : t));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  if (loading) return null;
-
-  const pendingTickets = tickets.filter(t => t.status.toUpperCase() === "PENDING");
-  const processedTickets = tickets.filter(t => t.status.toUpperCase() !== "PENDING");
-
-  const getStatusColor = (status: string) => {
+  const getStatusStyle = (status: string) => {
     const s = status.toUpperCase();
-    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-500/20 text-green-400';
-    if (s === 'DENIED' || s === 'REJECTED') return 'bg-red-500/20 text-red-400';
-    if (s === 'REVISION') return 'bg-orange-500/20 text-orange-400';
-    return 'bg-yellow-500/20 text-yellow-400';
+    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-100 text-green-800 border-green-200';
+    if (s === 'DENIED' || s === 'REJECTED') return 'bg-red-100 text-red-800 border-red-200';
+    if (s === 'REVISION') return 'bg-orange-100 text-orange-800 border-orange-200';
+    return 'bg-yellow-100 text-yellow-800 border-yellow-200';
   };
+
+  const pendingTickets = tickets.filter(t => t.status.toUpperCase() === 'PENDING');
+  const processedTickets = tickets.filter(t => t.status.toUpperCase() !== 'PENDING');
+
+  // Komponen Tabel disesuaikan agar lebih ringkas untuk layout bersebelahan
+  const TicketTable = ({ data, emptyMessage, isPending }: { data: any[], emptyMessage: string, isPending: boolean }) => (
+    <div className="overflow-x-auto custom-scrollbar">
+      {data.length === 0 ? (
+        <div className="p-10 text-center text-muted">{emptyMessage}</div>
+      ) : (
+        <table className="w-full text-left border-collapse min-w-[450px]">
+          <thead>
+            <tr className="border-b border-line bg-surface-soft/30 text-xs uppercase tracking-wider text-muted">
+              <th className="px-5 py-3 font-bold whitespace-nowrap">Event Details</th>
+              <th className="px-5 py-3 font-bold whitespace-nowrap">Date</th>
+              <th className="px-5 py-3 font-bold whitespace-nowrap">Status</th>
+              <th className="px-5 py-3 font-bold text-right whitespace-nowrap">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {data.map((ticket) => (
+              <tr key={ticket.id} className="transition-colors hover:bg-brand-pale/50">
+                <td className="px-5 py-4">
+                  <div className="text-xs font-bold text-muted mb-1">#{ticket.id}</div>
+                  <div className="text-sm font-semibold text-ink line-clamp-2">{ticket.event_name}</div>
+                </td>
+                <td className="px-5 py-4 text-sm text-muted whitespace-nowrap">
+                  {new Date(ticket.date).toLocaleDateString()}
+                </td>
+                <td className="px-5 py-4 whitespace-nowrap">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusStyle(ticket.status)}`}>
+                    {ticket.status}
+                  </span>
+                </td>
+                <td className="px-5 py-4 text-right whitespace-nowrap">
+                  <Link 
+                    href={`/admin/view/${ticket.id}`}
+                    className="inline-flex items-center justify-center rounded-lg border border-brand px-4 py-2 text-xs font-semibold text-brand transition-colors hover:bg-brand-pale focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  >
+                    {isPending ? 'Review' : 'View'}
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 
   return (
-    <main className="min-h-screen bg-neutral-900 text-white relative">
-      
-      {/* 🌟 INDIKATOR ADMIN (Badge di pojok kiri atas) */}
-      <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-400">
-        <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
-        <span className="text-xs font-bold uppercase tracking-widest">Admin Mode</span>
-      </div>
-
-      {/* Hero Section */}
-      <div 
-        className="w-full h-90 flex flex-col items-center justify-center relative"
-        style={{ backgroundImage: "url('https://img.magnific.com/free-vector/stylish-glowing-digital-red-lines-banner_1017-23964.jpg?semt=ais_hybrid&w=740&q=80')" }}
-      >
-        <div className="absolute inset-0 bg-black/80"></div>
-        <h1 className="relative z-10 text-4xl sm:text-5xl font-bold uppercase tracking-wide text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">
-          CONTROL PANEL
-        </h1>
-        <p className="relative z-10 mt-2 text-neutral-400 tracking-widest text-sm">Manage All Applications</p>
-      </div>
-
-      {/* Main Content Card */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Left Card: Pending (Antrean untuk Admin) */}
-          <div className="bg-neutral-800 rounded-xl shadow-2xl border border-red-900/50 overflow-hidden flex flex-col h-full">
-            <div className="p-4 sm:p-5 border-b border-neutral-700 flex justify-between items-center bg-neutral-800/80 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold uppercase tracking-wide flex items-center gap-2">
-                Action Required <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">{pendingTickets.length}</span>
-              </h2>
-            </div>
-
-            <div className="p-4 flex-1">
-              {pendingTickets.length === 0 ? (
-                <div className="text-center py-8 text-neutral-400">
-                  All clear! No pending tickets.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {pendingTickets.map((ticket) => (
-                    <div key={ticket.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-neutral-900/80 rounded-lg border border-neutral-700 hover:border-neutral-500 transition-colors">
-                      <Link href={`/admin/view/${ticket.id}`} className="block flex-1">
-                        <h3 className="font-medium text-base hover:text-blue-400 transition-colors">{ticket.event_name}</h3>
-                        <p className="text-xs text-neutral-400 mt-1">Submitted: {ticket.date}</p>
-                      </Link>
-                      
-                      {/* 🌟 TOMBOL AKSI KHUSUS ADMIN */}
-                      <div className="flex items-center gap-2 bg-neutral-950 p-1.5 rounded-lg border border-neutral-800">
-                        <button 
-                          onClick={() => handleUpdateStatus(ticket.id, 'APPROVED')}
-                          className="bg-green-600/20 hover:bg-green-600 text-green-400 hover:text-white px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all"
-                        >
-                          Approve
-                        </button>
-                        <button 
-                          onClick={() => handleUpdateStatus(ticket.id, 'REJECTED')}
-                          className="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Card: Processed (History) */}
-          <div className="bg-neutral-800 rounded-xl shadow-2xl border border-neutral-700 overflow-hidden flex flex-col h-full">
-            <div className="p-4 sm:p-5 border-b border-neutral-700 flex justify-between items-center bg-neutral-800/80 backdrop-blur-sm">
-              <h2 className="text-xl font-semibold uppercase tracking-wide">Decision History</h2>
-            </div>
-
-            <div className="p-4 flex-1">
-              {processedTickets.length === 0 ? (
-                <div className="text-center py-8 text-neutral-400">
-                  No processed tickets found.
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {processedTickets.map((ticket) => (
-                    <div key={ticket.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-neutral-900 rounded-lg border border-neutral-700 opacity-80 hover:opacity-100 transition-opacity">
-                      <div>
-                        <h3 className="font-medium text-base">{ticket.event_name}</h3>
-                        <p className="text-xs text-neutral-400">Date: {ticket.date}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(ticket.status)}`}>
-                          {ticket.status}
-                        </span>
-                        <Link href={`/admin/view/${ticket.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider transition-colors">
-                          View
-                        </Link>
-                        <button 
-                          onClick={() => handleDelete(ticket.id)}
-                          className="text-neutral-500 hover:text-red-400 text-xs font-semibold uppercase tracking-wider transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
+    <main className="min-h-screen bg-background text-ink pb-16">
+      <section className="bg-brand-pale py-12 sm:py-16">
+        <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand mb-3">
+            Admin Control Panel
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+            Media Partnership Applications
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-muted">
+            Kelola semua pengajuan masuk, berikan revisi, dan pantau riwayat keputusan proposal kemitraan.
+          </p>
         </div>
+      </section>
+
+      {/* 🌟 GRID LAYOUT: Kiri dan Kanan */}
+      {/* Menggunakan xl:grid-cols-2 agar bersebelahan di layar lebar */}
+      <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8 -mt-8 relative z-10 grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
+        
+        {loading ? (
+          <div className="col-span-full rounded-2xl border border-line bg-card p-10 text-center text-muted shadow-sm">
+            Memuat data tiket...
+          </div>
+        ) : (
+          <>
+            {/* KIRI: PERLU TINJAUAN (PENDING) */}
+            <div className="rounded-2xl border border-line bg-card shadow-[0_12px_35px_rgba(0,74,130,0.07)] overflow-hidden h-fit flex flex-col">
+              <div className="p-5 sm:p-6 border-b border-line bg-yellow-50/50 flex justify-between items-center">
+                <div>
+                  <h2 className="text-lg font-bold text-ink">Perlu Tinjauan</h2>
+                  <p className="text-xs text-muted mt-1">Menunggu keputusan Anda.</p>
+                </div>
+                <span className="inline-flex h-8 items-center justify-center rounded-lg bg-yellow-100 px-3 text-sm font-bold text-yellow-800 shrink-0">
+                  {pendingTickets.length} Tiket
+                </span>
+              </div>
+              <TicketTable 
+                data={pendingTickets} 
+                emptyMessage="Hore! Tidak ada tiket yang perlu direview saat ini." 
+                isPending={true}
+              />
+            </div>
+
+            {/* KANAN: RIWAYAT KEPUTUSAN (PROCESSED) */}
+            <div className="rounded-2xl border border-line bg-card shadow-[0_12px_35px_rgba(0,74,130,0.07)] overflow-hidden h-fit flex flex-col">
+              <div className="p-5 sm:p-6 border-b border-line bg-surface-soft/50 flex justify-between items-center">
+                <div>
+                  <h2 className="text-lg font-bold text-ink">Riwayat Keputusan</h2>
+                  <p className="text-xs text-muted mt-1">Tiket yang sudah diproses.</p>
+                </div>
+                <span className="inline-flex h-8 items-center justify-center rounded-lg bg-brand-light px-3 text-sm font-bold text-brand-dark shrink-0">
+                  {processedTickets.length} Tiket
+                </span>
+              </div>
+              <TicketTable 
+                data={processedTickets} 
+                emptyMessage="Belum ada riwayat keputusan tiket." 
+                isPending={false}
+              />
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
