@@ -15,12 +15,16 @@ Tanggung jawab:
 - Landing Page.
 - Responsiveness Landing Page.
 - CTA menuju Register dan Login.
+- Penjelasan fungsi dan alur PartnerHub.
+- Checklist informasi yang perlu disiapkan partner.
+- Link menuju website resmi HIMTI OFOG.
 - Komponen visual khusus Landing Page.
 
 Path yang boleh diubah:
 
 ```text
 Frontend/app/page.tsx
+Frontend/app/landing/**
 Frontend/components/landing/**
 Frontend/public/landing/**
 Frontend/lib/api/public.ts              # hanya jika dibutuhkan

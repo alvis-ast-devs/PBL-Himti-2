@@ -139,15 +139,24 @@ Validasi minimum:
 
 Isi minimum:
 
-- Penjelasan singkat PartnerHub.
+- Seluruh copy Landing Page menggunakan bahasa Inggris.
+- Penjelasan singkat bahwa PartnerHub membantu organisasi eksternal mengajukan
+  media partnership kepada HIMTI.
+- Penjelasan fungsi utama: pengajuan, review atau revisi, serta penyelesaian
+  deliverable dan bukti kerja sama.
 - Penjelasan alur pengajuan.
+- Checklist "What to Prepare" berdasarkan data pengajuan.
 - Tombol menuju Register.
 - Tombol menuju Login.
+- Link menuju website resmi HIMTI OFOG.
 
 Diterima jika:
 
+- Landing Page terbuka pada `/`.
+- `/landing` mengarahkan user ke Landing Page utama.
 - Tampilan dapat dibuka di desktop dan mobile.
 - Tombol menuju halaman yang benar.
+- Link website HIMTI membuka `https://ofog.himtibinus.or.id/`.
 - Tidak ada form register kedua di Landing Page.
 
 ### Register — Cecil

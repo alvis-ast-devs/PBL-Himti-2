@@ -34,6 +34,8 @@ PBL-Himti-2/
 │   │   ├── layout.tsx                # Shared
 │   │   ├── globals.css               # Shared
 │   │   ├── page.tsx                  # Adin - Landing Page
+│   │   ├── landing/                  # Adin - alias ke Landing Page
+│   │   │   └── page.tsx
 │   │   ├── login/                    # Cecil
 │   │   │   └── page.tsx
 │   │   ├── register/                 # Cecil
