@@ -225,48 +225,16 @@ require team approval because they affect every feature.
 
 ## 12. Push and merge handoff
 
-Setelah menyelesaikan perubahan, agent tidak boleh langsung mengubah `main`.
-Gunakan urutan berikut:
+Alur Git yang resmi berada di `docs/github_workflow.md`. Setelah menjelaskan
+hasil kerja, agent meminta izin user untuk commit dan push branch fitur.
 
-1. Jelaskan file yang diubah, fungsi yang sudah berjalan, asumsi atau pekerjaan
-   yang belum selesai, serta hasil lint, build, dan test yang relevan.
-2. Tanyakan kepada user apakah perubahan tersebut ingin di-commit dan di-push ke
-   branch fitur.
-3. Jika user menyetujui, stage hanya file yang termasuk scope, lalu commit dan
-   push branch fitur. Jangan ikut memasukkan perubahan lokal milik user atau
-   fitur lain.
-4. Setelah push berhasil, ambil `main` terbaru dan sinkronkan ke branch fitur:
+Setelah izin diberikan, agent melanjutkan seluruh alur secara otomatis:
 
-   ```bash
-   git fetch origin
-   git merge origin/main
-   ```
+1. Push branch fitur.
+2. Sinkronkan dengan `origin/main` terbaru.
+3. Selesaikan konflik sesuai ownership bila ada.
+4. Jalankan ulang lint, build, dan test relevan.
+5. Merge dan push ke `main`.
 
-5. Jika terjadi konflik, jangan merge ke `main`. Jelaskan file yang bertabrakan,
-   koordinasikan dengan owner, selesaikan konflik dengan membaca kedua sisi, dan
-   jalankan ulang pemeriksaan yang relevan.
-6. Jika merge dari `origin/main` menambah commit baru ke branch fitur, push ulang
-   branch tersebut setelah pemeriksaan berhasil.
-7. Jika `main` terbaru berhasil digabungkan tanpa konflik dan pemeriksaan tetap
-   berhasil, tanyakan:
-
-   > Perubahan sudah di-push dan tidak ada tabrakan dengan `main` terbaru. Apakah
-   > ingin saya merge ke `main`?
-
-8. Hanya setelah user menjawab setuju, pindah ke `main`, tarik versi terbaru,
-   merge branch fitur, jalankan pemeriksaan akhir, lalu push `main`:
-
-   ```bash
-   git checkout main
-   git pull origin main
-   git merge nama/branch-fitur
-   cd Frontend
-   npm run lint
-   npm run build
-   cd ..
-   git push origin main
-   ```
-
-Pull request boleh digunakan bila tim menginginkan review, tetapi tidak wajib.
-Yang wajib adalah izin user, `main` terbaru, tidak ada konflik yang belum
-diselesaikan, dan hasil pemeriksaan yang berhasil sebelum `main` di-push.
+Pull request dan persetujuan merge kedua tidak diperlukan. Jangan merge jika
+masih ada konflik atau pemeriksaan yang gagal.

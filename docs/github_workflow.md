@@ -5,6 +5,8 @@
 - `main` harus selalu dalam kondisi yang dapat dijalankan.
 - Tidak ada anggota yang boleh commit langsung ke `main`.
 - Semua perubahan masuk melalui merge dari branch fitur setelah dicek tidak bertabrakan.
+- Pull request tidak wajib. Branch fitur yang sudah sinkron, bebas konflik, dan
+  lulus pemeriksaan dapat langsung di-merge ke `main`.
 
 ## 2. Nama branch
 
@@ -47,33 +49,48 @@ git commit -m "feat(partner): add application form"
 git push -u origin nama/feature-nama-fitur
 ```
 
+Untuk coding agent, persetujuan user untuk commit dan push branch fitur juga
+mengizinkan agent melanjutkan sinkronisasi, pemeriksaan, merge, dan push ke
+`main`. Tidak perlu meminta persetujuan merge kedua.
+
 **Catatan penting untuk Windows:**
 - Gunakan PowerShell atau Git Bash
 - Path separator: gunakan `/` atau `\` sesuai shell yang dipakai
 - Jika pakai PowerShell dan ada spasi di path, gunakan quotes: `git add "Frontend/app/page.tsx"`
 
-Sebelum merge ke `main`:
+Setelah branch fitur di-push:
 
-1. Pastikan fitur sudah selesai dan teruji.
-2. Pull perubahan terbaru dari `main`:
+1. Ambil dan gabungkan `main` terbaru ke branch fitur:
    ```bash
-   git checkout main
-   git pull origin main
-   ```
-3. Kembali ke branch fitur dan merge `main`:
-   ```bash
+   git fetch origin
    git checkout nama/feature-nama-fitur
-   git merge main
+   git merge origin/main
    ```
-4. Selesaikan konflik jika ada.
-5. Test ulang: `npm run build` dan `npm run lint`.
-6. Jika tidak ada masalah, merge ke `main`:
+2. Jika ada konflik, jangan merge ke `main`. Baca kedua sisi perubahan,
+   selesaikan sesuai ownership, dan commit hasil resolusi.
+3. Jalankan lint, build, dan test yang relevan pada branch hasil sinkronisasi.
+4. Jika sinkronisasi menambah commit, push ulang branch fitur.
+5. Jika tidak ada konflik yang tersisa dan semua pemeriksaan berhasil, update
+   `main`, merge branch fitur, lalu jalankan pemeriksaan akhir:
    ```bash
    git checkout main
+   git pull --ff-only origin main
    git merge nama/feature-nama-fitur
+   cd Frontend
+   npm run lint
+   npm run build
+   cd ..
+   ```
+6. Jika terjadi konflik pada tahap ini, jalankan `git merge --abort`, kembali ke
+   branch fitur, sinkronkan ulang, selesaikan konflik, dan ulangi pemeriksaan.
+   Jika remote `main` berubah lagi sebelum push, ulangi proses sinkronisasi.
+   Jangan memaksa push atau menyelesaikan konflik secara sembarang.
+7. Setelah pemeriksaan akhir berhasil, push `main` tanpa meminta persetujuan
+   merge kedua dan tanpa mewajibkan pull request:
+   ```bash
    git push origin main
    ```
-7. Hapus branch fitur (opsional):
+8. Hapus branch fitur (opsional):
    ```bash
    git branch -d nama/feature-nama-fitur
    git push origin --delete nama/feature-nama-fitur
@@ -131,7 +148,7 @@ Sebelum merge branch fitur ke `main`, pastikan:
 - [ ] Hanya mengubah file yang diizinkan sesuai feature ownership
 - [ ] Tidak ada password atau secret di commit
 - [ ] Tidak ada file `.env` yang ter-commit
-- [ ] Sudah pull dan merge `main` ke branch fitur
+- [ ] Sudah fetch dan merge `origin/main` terbaru ke branch fitur
 - [ ] Konflik sudah diselesaikan (jika ada)
 - [ ] Build berhasil: `npm run build` (Frontend)
 - [ ] Lint passed: `npm run lint` (Frontend)
@@ -176,10 +193,9 @@ Gunakan `.env.example` tanpa nilai rahasia sebagai template.
 Sebelum melanjutkan branch lama atau sebelum merge ke main:
 
 ```bash
-git checkout main
-git pull origin main
+git fetch origin
 git checkout nama/branch-kamu
-git merge main
+git merge origin/main
 ```
 
 Selesaikan konflik pada branch sendiri, bukan langsung di `main`.

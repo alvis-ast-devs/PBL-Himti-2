@@ -10,7 +10,8 @@ PBL-Himti-2/
 │   ├── prd.md
 │   ├── feature_ownership.md
 │   ├── github_workflow.md
-│   └── repo_structure.md
+│   ├── repo_structure.md
+│   └── ui-ux-guidelines.md
 │
 ├── Frontend/
 │   ├── package.json
@@ -24,6 +25,10 @@ PBL-Himti-2/
 │   ├── public/
 │   │   ├── next.svg
 │   │   ├── vercel.svg
+│   │   ├── brand/                    # Shared, protected
+│   │   │   ├── binus-university-logo.png
+│   │   │   ├── himti-lockup.png
+│   │   │   └── himti-mark.png
 │   │   └── landing/                  # Adin
 │   ├── app/
 │   │   ├── layout.tsx                # Shared
@@ -89,6 +94,11 @@ PBL-Himti-2/
 - Jangan mencampur endpoint admin dan partner dalam satu file besar jika dapat dipisahkan.
 - Shared component hanya untuk komponen yang benar-benar digunakan minimal dua fitur.
 - Jangan memindahkan komponen ke `shared` hanya karena mungkin akan dipakai nanti.
+- Semua fitur frontend menggunakan palette dan tipografi bersama dari
+  `Frontend/app/globals.css` dan `Frontend/app/layout.tsx`.
+- Semua fitur boleh menggunakan asset di `Frontend/public/brand/`, tetapi
+  perubahan atau penambahan asset brand membutuhkan persetujuan tim.
+- Ikuti `docs/ui-ux-guidelines.md` untuk keputusan UI/UX frontend.
 - Gunakan Prisma Client untuk query database, bukan raw SQL.
 - Semua perubahan schema database harus melalui `prisma/schema.prisma` dan di-migrate dengan `npx prisma migrate dev`.
 - Folder yang belum ada (seperti `components/`, `lib/`, `features/`, `middleware/`) akan dibuat sesuai kebutuhan oleh pemilik fitur masing-masing.

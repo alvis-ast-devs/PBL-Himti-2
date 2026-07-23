@@ -144,6 +144,7 @@ Frontend/next.config.ts
 Frontend/tailwind.config.*
 Frontend/postcss.config.*
 Frontend/eslint.config.mjs
+Frontend/public/brand/**
 Frontend/app/layout.tsx
 Frontend/app/globals.css
 Frontend/components/shared/**
@@ -153,7 +154,16 @@ Backend/index.ts
 Backend/prisma/schema.prisma     # koordinasi wajib untuk model bersama
 ```
 
-Perubahan file bersama membutuhkan izin eksplisit dan harus dijelaskan dalam PR.
+Sumber UI/UX bersama:
+
+- `Frontend/app/globals.css` menyimpan palette dan token visual bersama.
+- `Frontend/app/layout.tsx` mengatur font global.
+- `Frontend/public/brand/**` menyimpan logo yang dapat digunakan semua fitur.
+- `docs/ui-ux-guidelines.md` menjadi pedoman UI/UX seluruh fitur frontend.
+
+Semua owner boleh menggunakan token, font, dan asset tersebut tanpa izin
+tambahan. Mengubah sumber bersama tetap membutuhkan izin eksplisit dan harus
+dijelaskan dalam hasil kerja serta commit. Pull request tidak wajib.
 
 ## 7. Matriks perubahan
 
@@ -174,4 +184,5 @@ Jika build gagal karena file orang lain:
 - Jangan diam-diam memperbaikinya.
 - Catat error lengkap.
 - Hubungi owner.
-- Bila user memberi izin lintas fitur, lakukan perubahan minimum dan tulis di PR.
+- Bila user memberi izin lintas fitur, lakukan perubahan minimum dan jelaskan
+  pada hasil kerja serta commit.
