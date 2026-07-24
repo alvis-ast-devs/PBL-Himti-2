@@ -56,23 +56,22 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-brand-pale text-ink relative">
       {/* Hero Section with Image Background */}
-      <div 
+      <div
         className="w-full h-90 flex items-center justify-center relative"
-        style={{ backgroundImage: "url('https://img.magnific.com/free-vector/stylish-glowing-digital-red-lines-banner_1017-23964.jpg?semt=ais_hybrid&w=740&q=80')" }}
       >
-        <div className="absolute inset-0 bg-brand-dark/70"></div>
+        <div className="absolute inset-0 bg-brand-dark"></div>
         <h1 className="relative z-10 text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">TICKETS</h1>
       </div>
 
       {/* Main Content Card (Connector) */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
+
           {/* Left Card: Pending */}
           <div className="bg-card rounded-xl shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
             <div className="p-4 sm:p-5 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
               <h2 className="text-xl font-bold uppercase tracking-wide text-ink">Pending Tickets</h2>
-              <Link 
+              <Link
                 href="/dashboard/create"
                 className="bg-brand hover:bg-brand-dark text-white px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors inline-block"
               >
@@ -100,7 +99,7 @@ export default function Dashboard() {
                         <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
                           Edit
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(ticket.id)}
                           className="text-status-rejected-foreground hover:opacity-80 text-xs font-bold uppercase tracking-wider transition-colors"
                         >
@@ -140,7 +139,7 @@ export default function Dashboard() {
                         <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
                           Edit
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(ticket.id)}
                           className="text-status-rejected-foreground hover:opacity-80 text-xs font-bold uppercase tracking-wider transition-colors"
                         >
