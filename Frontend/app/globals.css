@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* HIMTI PartnerHub brand palette */
+  --color-primary: #0066b3;
+  --color-primary-dark: #004a82;
+  --color-primary-bright: #1689d8;
+  --color-primary-light: #ddeffc;
+  --color-primary-pale: #f2f9fe;
+
+  /* Shared surfaces and content colors */
+  --color-white: #ffffff;
+  --color-surface: #fafcfe;
+  --color-text: #102a43;
+  --color-text-muted: #5f7485;
+  --color-border: #c9dceb;
+  --color-disabled: #a9bac8;
+
+  /* Application status colors */
+  --color-status-submitted-bg: #ddeffc;
+  --color-status-submitted-text: #004a82;
+  --color-status-review-bg: #fef3c7;
+  --color-status-review-text: #92400e;
+  --color-status-approved-bg: #dcfce7;
+  --color-status-approved-text: #166534;
+  --color-status-rejected-bg: #fee2e2;
+  --color-status-rejected-text: #991b1b;
+  --color-status-completed-bg: #dbeafe;
+  --color-status-completed-text: #1e3a8a;
+
+  --background: var(--color-primary-pale);
+  --foreground: var(--color-text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta);
+  --color-brand: var(--color-primary);
+  --color-brand-dark: var(--color-primary-dark);
+  --color-brand-bright: var(--color-primary-bright);
+  --color-brand-light: var(--color-primary-light);
+  --color-brand-pale: var(--color-primary-pale);
+  --color-card: var(--color-white);
+  --color-surface-soft: var(--color-surface);
+  --color-ink: var(--color-text);
+  --color-muted: var(--color-text-muted);
+  --color-line: var(--color-border);
+  --color-control-disabled: var(--color-disabled);
+  --color-status-submitted-surface: var(--color-status-submitted-bg);
+  --color-status-submitted-foreground: var(--color-status-submitted-text);
+  --color-status-review-surface: var(--color-status-review-bg);
+  --color-status-review-foreground: var(--color-status-review-text);
+  --color-status-approved-surface: var(--color-status-approved-bg);
+  --color-status-approved-foreground: var(--color-status-approved-text);
+  --color-status-rejected-surface: var(--color-status-rejected-bg);
+  --color-status-rejected-foreground: var(--color-status-rejected-text);
+  --color-status-completed-surface: var(--color-status-completed-bg);
+  --color-status-completed-foreground: var(--color-status-completed-text);
+  --font-sans: var(--font-public-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), sans-serif;
+  font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
 }
