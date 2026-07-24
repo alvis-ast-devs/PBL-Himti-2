@@ -2,6 +2,8 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
+import { LandingHeader } from "@/components/landing/LandingHeader";
+import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function ViewTicket({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
@@ -68,21 +70,23 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
   };
 
   return (
-    <main className="min-h-screen bg-brand-pale text-ink relative">
-      {/* Hero Section */}
-      <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
-        <div className="absolute inset-0 bg-brand-dark"></div>
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <LandingHeader />
+      <main className="min-h-screen bg-brand-pale text-ink relative">
+        {/* Hero Section */}
+        <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
+          <div className="absolute inset-0 bg-brand-dark"></div>
+          <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">View Ticket</h1>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12 space-y-6">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12 space-y-6">
         
         {/* Ticket Details Card */}
         <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
-          <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
             <Link href="/dashboard" className="text-muted hover:text-ink transition-colors text-sm font-bold uppercase tracking-wider">
               ← Back to Dashboard
             </Link>
@@ -91,7 +95,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
             </span>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-4 sm:p-6 space-y-6">
             <div>
               <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted mb-1">Title</h3>
               <p className="text-lg font-bold text-ink">{ticket.event_name}</p>
@@ -128,11 +132,11 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
 
         {/* Comments Section Card */}
         <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
-          <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line bg-card/90 backdrop-blur-sm">
+          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line bg-card/90 backdrop-blur-sm">
             <h2 className="text-2xl font-bold leading-tight text-ink">Comments</h2>
           </div>
           
-          <div className="p-6 sm:p-8 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             {/* List of comments */}
             <div className="space-y-4 mb-6">
               {comments.map(comment => (
@@ -167,5 +171,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
 
       </div>
     </main>
+    <LandingFooter />
+    </>
   );
 }

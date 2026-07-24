@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { LandingHeader } from "@/components/landing/LandingHeader";
+import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function Dashboard() {
   const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string}[]>([]);
@@ -54,17 +56,19 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="min-h-screen bg-brand-pale text-ink relative">
-      {/* Hero Section */}
-      <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
-        <div className="absolute inset-0 bg-brand-dark"></div>
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <LandingHeader />
+      <main className="min-h-screen bg-brand-pale text-ink relative">
+        {/* Hero Section */}
+        <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
+          <div className="absolute inset-0 bg-brand-dark"></div>
+          <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">Tickets</h1>
         </div>
       </div>
 
       {/* Main Content Card (Connector) */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Left Card: Pending */}
@@ -79,7 +83,7 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            <div className="p-6 sm:p-8 flex-1">
+            <div className="p-4 sm:p-6 flex-1">
               {pendingTickets.length === 0 ? (
                 <div className="py-8 text-muted">
                   No pending tickets found.
@@ -115,11 +119,11 @@ export default function Dashboard() {
 
           {/* Right Card: Processed */}
           <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
-            <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
               <h2 className="text-2xl font-bold leading-tight text-ink">Processed Tickets</h2>
             </div>
 
-            <div className="p-6 sm:p-8 flex-1">
+            <div className="p-4 sm:p-6 flex-1">
               {processedTickets.length === 0 ? (
                 <div className="py-8 text-muted">
                   No processed tickets found.
@@ -156,5 +160,7 @@ export default function Dashboard() {
         </div>
       </div>
     </main>
+    <LandingFooter />
+    </>
   );
 }
