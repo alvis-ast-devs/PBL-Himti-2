@@ -23,6 +23,13 @@ export default function EditTicket({ params }: { params: Promise<{ id: string }>
         const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`);
         const json = await res.json();
         if (json.success && json.data) {
+          const restricted = ['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'];
+          if (restricted.includes(json.data.status.toUpperCase())) {
+            alert("Ticket cannot be edited anymore.");
+            router.push('/dashboard');
+            return;
+          }
+          
           setFormData({
             event_name: json.data.event_name || "",
             location: json.data.location || "",

@@ -28,6 +28,11 @@ class ApplicationService {
          throw new Error('Data pengajuan tidak ditemukan dan gagal diperbarui');
       }
 
+      const restrictedStatuses = ['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'];
+      if (restrictedStatuses.includes(application.status.toUpperCase())) {
+         throw new Error('Pengajuan yang sudah diproses tidak dapat diubah lagi');
+      }
+
       return await applicationRepository.update(id, data);
    }
 

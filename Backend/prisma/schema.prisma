@@ -55,6 +55,7 @@ model Application {
   deliverables    Deliverable[]
   status_histories StatusHistory[]
   comments      Comment[]
+  updated_at    DateTime?       @updatedAt
 
   @@map("applications")
 }

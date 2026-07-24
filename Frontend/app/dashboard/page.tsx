@@ -6,8 +6,9 @@ import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function Dashboard() {
-  const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string}[]>([]);
+  const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string, updated_at?: string}[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchTickets = async () => {
     try {
@@ -44,8 +45,9 @@ export default function Dashboard() {
 
   if (loading) return null; // Prevent hydration mismatch
 
-  const pendingTickets = tickets.filter(t => t.status.toUpperCase() === "PENDING");
-  const processedTickets = tickets.filter(t => t.status.toUpperCase() !== "PENDING");
+  const filteredTickets = tickets.filter(t => t.event_name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const pendingTickets = filteredTickets.filter(t => t.status.toUpperCase() === "PENDING");
+  const processedTickets = filteredTickets.filter(t => t.status.toUpperCase() !== "PENDING");
 
   const getStatusColor = (status: string) => {
     const s = status.toUpperCase();
@@ -69,6 +71,17 @@ export default function Dashboard() {
 
       {/* Main Content Card (Connector) */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-end">
+          <input 
+            type="text" 
+            placeholder="Search tickets by event name..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full max-w-sm bg-card border border-line rounded-lg px-4 py-2.5 text-sm text-ink shadow-[0_4px_20px_rgba(0,74,130,0.08)] focus:outline-none focus:border-brand transition-colors"
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Left Card: Pending */}
@@ -93,16 +106,21 @@ export default function Dashboard() {
                   {pendingTickets.map((ticket) => (
                     <div key={ticket.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-soft rounded-lg border border-line">
                       <Link href={`/dashboard/view/${ticket.id}`} className="block hover:opacity-80 transition-opacity">
-                        <h3 className="font-bold text-base text-ink hover:text-brand transition-colors">{ticket.event_name}</h3>
+                        <h3 className="font-bold text-base text-ink hover:text-brand transition-colors">
+                          {ticket.event_name}
+                          {ticket.updated_at && <span className="ml-2 text-[10px] text-muted italic font-normal">Edited {new Date(ticket.updated_at).toLocaleDateString()}</span>}
+                        </h3>
                         <p className="text-xs text-muted">Date: {ticket.date}</p>
                       </Link>
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(ticket.status)}`}>
                           {ticket.status}
                         </span>
-                        <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
-                          Edit
-                        </Link>
+                        {!['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'].includes(ticket.status.toUpperCase()) && (
+                          <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
+                            Edit
+                          </Link>
+                        )}
                         <button
                           onClick={() => handleDelete(ticket.id)}
                           className="text-status-rejected-foreground hover:opacity-80 text-xs font-bold uppercase tracking-wider transition-colors"
@@ -133,16 +151,21 @@ export default function Dashboard() {
                   {processedTickets.map((ticket) => (
                     <div key={ticket.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-surface-soft rounded-lg border border-line">
                       <Link href={`/dashboard/view/${ticket.id}`} className="block hover:opacity-80 transition-opacity">
-                        <h3 className="font-bold text-base text-ink hover:text-brand transition-colors">{ticket.event_name}</h3>
+                        <h3 className="font-bold text-base text-ink hover:text-brand transition-colors">
+                          {ticket.event_name}
+                          {ticket.updated_at && <span className="ml-2 text-[10px] text-muted italic font-normal">Edited {new Date(ticket.updated_at).toLocaleDateString()}</span>}
+                        </h3>
                         <p className="text-xs text-muted">Date: {ticket.date}</p>
                       </Link>
                       <div className="flex items-center gap-3">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(ticket.status)}`}>
                           {ticket.status}
                         </span>
-                        <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
-                          Edit
-                        </Link>
+                        {!['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'].includes(ticket.status.toUpperCase()) && (
+                          <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
+                            Edit
+                          </Link>
+                        )}
                         <button
                           onClick={() => handleDelete(ticket.id)}
                           className="text-status-rejected-foreground hover:opacity-80 text-xs font-bold uppercase tracking-wider transition-colors"

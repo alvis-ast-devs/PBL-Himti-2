@@ -10,11 +10,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
   const [ticket, setTicket] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Dummy comments state
-  const [comments, setComments] = useState([
-    { id: 1, user: "Admin", text: "We need to revise the proposal before approval.", date: "2026-07-21" },
-    { id: 2, user: "Reviewer", text: "Looks good, just waiting for the final budget.", date: "2026-07-22" }
-  ]);
+  const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
@@ -28,6 +24,11 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
             date: json.data.date ? new Date(json.data.date).toISOString().split('T')[0] : "N/A"
           });
         }
+        const commentsRes = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}/comments`);
+        const commentsJson = await commentsRes.json();
+        if (commentsJson.success) {
+          setComments(commentsJson.data);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -37,15 +38,24 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
     fetchTicket();
   }, [unwrappedParams.id]);
 
-  const handleAddComment = (e: React.FormEvent) => {
+  const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
     
-    setComments([
-      ...comments,
-      { id: Date.now(), user: "You", text: newComment, date: new Date().toISOString().split('T')[0] }
-    ]);
-    setNewComment("");
+    try {
+      const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: 1, message: newComment }) // Hardcoded user_id for now
+      });
+      const json = await res.json();
+      if (json.success) {
+        setComments([...comments, json.data]);
+        setNewComment("");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) return null;
@@ -142,10 +152,10 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
               {comments.map(comment => (
                 <div key={comment.id} className="bg-surface-soft rounded-lg p-4 border border-line">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-sm text-brand-dark">{comment.user}</span>
-                    <span className="text-[10px] text-muted">{comment.date}</span>
+                    <span className="font-bold text-sm text-brand-dark">{comment.user?.name || `User ${comment.user_id}`}</span>
+                    <span className="text-[10px] text-muted">{new Date(comment.created_at).toLocaleDateString()}</span>
                   </div>
-                  <p className="text-sm text-ink">{comment.text}</p>
+                  <p className="text-sm text-ink">{comment.message}</p>
                 </div>
               ))}
             </div>
