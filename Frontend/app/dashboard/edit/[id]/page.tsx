@@ -57,24 +57,24 @@ export default function EditTicket({ params }: { params: Promise<{ id: string }>
   return (
     <main className="min-h-screen bg-brand-pale text-ink relative">
       {/* Hero Section */}
-      <div className="w-full h-90 flex items-center relative">
+      <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
         <div className="absolute inset-0 bg-brand-dark"></div>
         <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">EDIT TICKET</h1>
+          <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">Edit Ticket</h1>
         </div>
       </div>
 
       {/* Main Content Card (Connector) */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
-        <div className="bg-card rounded-xl shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
+        <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
           
-          <div className="p-4 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+          <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
             <Link href="/dashboard" className="text-muted hover:text-ink transition-colors text-sm font-bold uppercase tracking-wider">
               ← Back to Dashboard
             </Link>
           </div>
 
-          <div className="p-4 sm:p-6">
+          <div className="p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted">Title</label>

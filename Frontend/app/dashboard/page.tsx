@@ -56,10 +56,10 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-brand-pale text-ink relative">
       {/* Hero Section */}
-      <div className="w-full h-90 flex items-center relative">
+      <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
         <div className="absolute inset-0 bg-brand-dark"></div>
         <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">TICKETS</h1>
+          <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">Tickets</h1>
         </div>
       </div>
 
@@ -68,9 +68,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Left Card: Pending */}
-          <div className="bg-card rounded-xl shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
-            <div className="p-4 sm:p-5 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
-              <h2 className="text-xl font-bold uppercase tracking-wide text-ink">Pending Tickets</h2>
+          <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
+            <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold leading-tight text-ink">Pending Tickets</h2>
               <Link
                 href="/dashboard/create"
                 className="bg-brand hover:bg-brand-dark text-white px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors inline-block"
@@ -79,7 +79,7 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            <div className="p-4 flex-1">
+            <div className="p-6 sm:p-8 flex-1">
               {pendingTickets.length === 0 ? (
                 <div className="py-8 text-muted">
                   No pending tickets found.
@@ -114,12 +114,12 @@ export default function Dashboard() {
           </div>
 
           {/* Right Card: Processed */}
-          <div className="bg-card rounded-xl shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
-            <div className="p-4 sm:p-5 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
-              <h2 className="text-xl font-bold uppercase tracking-wide text-ink">Processed Tickets</h2>
+          <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
+            <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+              <h2 className="text-2xl font-bold leading-tight text-ink">Processed Tickets</h2>
             </div>
 
-            <div className="p-4 flex-1">
+            <div className="p-6 sm:p-8 flex-1">
               {processedTickets.length === 0 ? (
                 <div className="py-8 text-muted">
                   No processed tickets found.
