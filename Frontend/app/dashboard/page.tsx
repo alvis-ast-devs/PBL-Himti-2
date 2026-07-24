@@ -62,13 +62,13 @@ export default function Dashboard() {
         {/* Hero Section */}
         <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
           <div className="absolute inset-0 bg-brand-dark"></div>
-          <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">Tickets</h1>
         </div>
       </div>
 
       {/* Main Content Card (Connector) */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Left Card: Pending */}

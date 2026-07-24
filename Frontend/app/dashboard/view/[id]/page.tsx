@@ -76,13 +76,13 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
         {/* Hero Section */}
         <div className="w-full flex items-center relative pt-16 pb-28 sm:pt-20 sm:pb-32 lg:pt-24 lg:pb-36">
           <div className="absolute inset-0 bg-brand-dark"></div>
-          <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">View Ticket</h1>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12 space-y-6">
         
         {/* Ticket Details Card */}
         <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
