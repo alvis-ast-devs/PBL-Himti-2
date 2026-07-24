@@ -55,14 +55,16 @@ export default function Dashboard() {
     if (editedFilter === "NOT_EDITED") matchesEdited = !t.updated_at;
     return matchesSearch && matchesStatus && matchesEdited;
   });
-  const pendingTickets = filteredTickets.filter(t => t.status.toUpperCase() === "PENDING");
-  const processedTickets = filteredTickets.filter(t => t.status.toUpperCase() !== "PENDING");
+  const isProcessed = (status: string) => ['APPROVED', 'REJECTED', 'COMPLETED'].includes(status.toUpperCase());
+  const pendingTickets = filteredTickets.filter(t => !isProcessed(t.status));
+  const processedTickets = filteredTickets.filter(t => isProcessed(t.status));
 
   const getStatusColor = (status: string) => {
     const s = status.toUpperCase();
-    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-status-approved-surface text-status-approved-foreground';
-    if (s === 'DENIED' || s === 'REJECTED') return 'bg-status-rejected-surface text-status-rejected-foreground';
-    if (s === 'REVISION') return 'bg-status-review-surface text-status-review-foreground';
+    if (s === 'APPROVED' || s === 'COMPLETED') return 'bg-status-approved-surface text-status-approved-foreground';
+    if (s === 'REJECTED') return 'bg-status-rejected-surface text-status-rejected-foreground';
+    if (s === 'REVISION REQUIRED') return 'bg-status-review-surface text-status-review-foreground';
+    if (s === 'UNDER REVIEW') return 'bg-blue-500/20 text-blue-400';
     return 'bg-status-submitted-surface text-status-submitted-foreground';
   };
 
@@ -83,7 +85,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr_1fr] gap-6">
 
           {/* Filters Card */}
-          <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-max">
+          <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-max">
             <div className="px-6 py-5 border-b border-line">
               <h2 className="text-2xl font-bold leading-tight text-ink">Filters</h2>
             </div>
@@ -106,12 +108,13 @@ export default function Dashboard() {
                   className="w-full bg-surface-soft border border-line rounded-lg px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-brand transition-colors appearance-none"
                 >
                   <option value="ALL">All Statuses</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="ACCEPTED">Accepted</option>
+                  <option value="DRAFT">Draft</option>
+                  <option value="SUBMITTED">Submitted</option>
+                  <option value="UNDER REVIEW">Under Review</option>
+                  <option value="REVISION REQUIRED">Revision Required</option>
                   <option value="APPROVED">Approved</option>
-                  <option value="DENIED">Denied</option>
                   <option value="REJECTED">Rejected</option>
-                  <option value="REVISION">Revision</option>
+                  <option value="COMPLETED">Completed</option>
                 </select>
               </div>
               <div>
@@ -130,7 +133,7 @@ export default function Dashboard() {
           </div>
 
           {/* Left Card: Pending */}
-          <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
+          <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
             <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
               <h2 className="text-2xl font-bold leading-tight text-ink">Pending Tickets</h2>
               <Link
@@ -183,7 +186,7 @@ export default function Dashboard() {
           </div>
 
           {/* Right Card: Processed */}
-          <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
+          <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
             <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
               <h2 className="text-2xl font-bold leading-tight text-ink">Processed Tickets</h2>
             </div>

@@ -73,10 +73,11 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
 
   const getStatusColor = (status: string) => {
     const s = status.toUpperCase();
-    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-500/20 text-green-400';
-    if (s === 'DENIED') return 'bg-red-500/20 text-red-400';
-    if (s === 'REVISION') return 'bg-orange-500/20 text-orange-400';
-    return 'bg-yellow-500/20 text-yellow-400';
+    if (s === 'APPROVED' || s === 'COMPLETED') return 'bg-status-approved-surface text-status-approved-foreground';
+    if (s === 'REJECTED') return 'bg-status-rejected-surface text-status-rejected-foreground';
+    if (s === 'REVISION REQUIRED') return 'bg-status-review-surface text-status-review-foreground';
+    if (s === 'UNDER REVIEW') return 'bg-blue-500/20 text-blue-400';
+    return 'bg-status-submitted-surface text-status-submitted-foreground';
   };
 
   return (
@@ -95,7 +96,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-18 relative z-20 pb-12 space-y-6">
         
         {/* Ticket Details Card */}
-        <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
+        <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
             <Link href="/dashboard" className="text-muted hover:text-ink transition-colors text-sm font-bold uppercase tracking-wider">
               ← Back to Dashboard
@@ -141,7 +142,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Comments Section Card */}
-        <div className="bg-card rounded-[1.75rem] shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
+        <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden">
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line bg-card/90 backdrop-blur-sm">
             <h2 className="text-2xl font-bold leading-tight text-ink">Comments</h2>
           </div>
