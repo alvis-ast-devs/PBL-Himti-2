@@ -5,6 +5,16 @@ import Link from "next/link";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
+const normalizeStatus = (s: string) => {
+  if (!s) return 'DRAFT';
+  const upper = s.toUpperCase();
+  if (upper === 'PENDING') return 'SUBMITTED';
+  if (upper === 'ACCEPTED') return 'APPROVED';
+  if (upper === 'DENIED') return 'REJECTED';
+  if (upper === 'REVISION') return 'REVISION REQUIRED';
+  return upper;
+};
+
 export default function Dashboard() {
   const [tickets, setTickets] = useState<{id: number, event_name: string, status: string, date: string, updated_at?: string}[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +29,7 @@ export default function Dashboard() {
       if (json.success) {
         const mapped = json.data.map((t: any) => ({
           ...t,
+          status: normalizeStatus(t.status),
           date: t.date ? new Date(t.date).toISOString().split('T')[0] : "N/A"
         }));
         setTickets(mapped);
@@ -63,7 +74,7 @@ export default function Dashboard() {
     const s = status.toUpperCase();
     if (s === 'APPROVED' || s === 'COMPLETED') return 'bg-status-approved-surface text-status-approved-foreground';
     if (s === 'REJECTED') return 'bg-status-rejected-surface text-status-rejected-foreground';
-    if (s === 'REVISION REQUIRED') return 'bg-status-review-surface text-status-review-foreground';
+    if (s === 'REVISION') return 'bg-status-review-surface text-status-review-foreground';
     if (s === 'UNDER REVIEW') return 'bg-blue-500/20 text-blue-400';
     return 'bg-status-submitted-surface text-status-submitted-foreground';
   };
@@ -92,9 +103,9 @@ export default function Dashboard() {
             <div className="p-6 space-y-6">
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted mb-2 block">Search</label>
-                <input 
-                  type="text" 
-                  placeholder="Search tickets..." 
+                <input
+                  type="text"
+                  placeholder="Search tickets..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-surface-soft border border-line rounded-lg px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-brand transition-colors"
@@ -102,7 +113,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted mb-2 block">Status</label>
-                <select 
+                <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="w-full bg-surface-soft border border-line rounded-lg px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-brand transition-colors appearance-none"
@@ -119,7 +130,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-muted mb-2 block">Edited</label>
-                <select 
+                <select
                   value={editedFilter}
                   onChange={(e) => setEditedFilter(e.target.value)}
                   className="w-full bg-surface-soft border border-line rounded-lg px-4 py-2.5 text-sm text-ink focus:outline-none focus:border-brand transition-colors appearance-none"
@@ -134,7 +145,7 @@ export default function Dashboard() {
 
           {/* Left Card: Pending */}
           <div className="bg-card rounded-lg shadow-[0_24px_70px_rgba(0,74,130,0.14)] border border-line overflow-hidden flex flex-col h-full">
-            <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-line flex justify-between items-center bg-card/90 backdrop-blur-sm">
               <h2 className="text-2xl font-bold leading-tight text-ink">Pending Tickets</h2>
               <Link
                 href="/dashboard/create"
@@ -165,7 +176,7 @@ export default function Dashboard() {
                       </Link>
                       <div className="flex items-center gap-4 shrink-0 justify-end min-w-[110px]">
                         <div className="w-10 text-right">
-                          {!['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'].includes(ticket.status.toUpperCase()) && (
+                          {!isProcessed(ticket.status) && (
                             <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
                               Edit
                             </Link>
@@ -212,7 +223,7 @@ export default function Dashboard() {
                       </Link>
                       <div className="flex items-center gap-4 shrink-0 justify-end min-w-[110px]">
                         <div className="w-10 text-right">
-                          {!['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'].includes(ticket.status.toUpperCase()) && (
+                          {!isProcessed(ticket.status) && (
                             <Link href={`/dashboard/edit/${ticket.id}`} className="text-muted hover:text-ink text-xs font-bold uppercase tracking-wider transition-colors">
                               Edit
                             </Link>

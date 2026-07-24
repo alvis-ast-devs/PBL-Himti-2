@@ -5,6 +5,16 @@ import Link from "next/link";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
+const normalizeStatus = (s: string) => {
+  if (!s) return 'DRAFT';
+  const upper = s.toUpperCase();
+  if (upper === 'PENDING') return 'SUBMITTED';
+  if (upper === 'ACCEPTED') return 'APPROVED';
+  if (upper === 'DENIED') return 'REJECTED';
+  if (upper === 'REVISION') return 'REVISION REQUIRED';
+  return upper;
+};
+
 export default function ViewTicket({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
   const [ticket, setTicket] = useState<any>(null);
@@ -21,6 +31,7 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
         if (json.success && json.data) {
           setTicket({
             ...json.data,
+            status: normalizeStatus(json.data.status),
             date: json.data.date ? new Date(json.data.date).toISOString().split('T')[0] : "N/A"
           });
         }

@@ -6,6 +6,16 @@ import Link from "next/link";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 
+const normalizeStatus = (s: string) => {
+  if (!s) return 'DRAFT';
+  const upper = s.toUpperCase();
+  if (upper === 'PENDING') return 'SUBMITTED';
+  if (upper === 'ACCEPTED') return 'APPROVED';
+  if (upper === 'DENIED') return 'REJECTED';
+  if (upper === 'REVISION') return 'REVISION REQUIRED';
+  return upper;
+};
+
 export default function EditTicket({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const unwrappedParams = use(params);
@@ -23,8 +33,9 @@ export default function EditTicket({ params }: { params: Promise<{ id: string }>
         const res = await fetch(`http://localhost:5000/api/applications/${unwrappedParams.id}`);
         const json = await res.json();
         if (json.success && json.data) {
-          const restricted = ['ACCEPTED', 'APPROVED', 'DENIED', 'REJECTED'];
-          if (restricted.includes(json.data.status.toUpperCase())) {
+          const normStatus = normalizeStatus(json.data.status);
+          const restricted = ['APPROVED', 'REJECTED', 'COMPLETED'];
+          if (restricted.includes(normStatus)) {
             alert("Ticket cannot be edited anymore.");
             router.push('/dashboard');
             return;
