@@ -47,10 +47,10 @@ export default function Dashboard() {
 
   const getStatusColor = (status: string) => {
     const s = status.toUpperCase();
-    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-green-500/20 text-green-400';
-    if (s === 'DENIED') return 'bg-red-500/20 text-red-400';
-    if (s === 'REVISION') return 'bg-orange-500/20 text-orange-400';
-    return 'bg-yellow-500/20 text-yellow-400';
+    if (s === 'ACCEPTED' || s === 'APPROVED') return 'bg-status-approved-surface text-status-approved-foreground';
+    if (s === 'DENIED' || s === 'REJECTED') return 'bg-status-rejected-surface text-status-rejected-foreground';
+    if (s === 'REVISION') return 'bg-status-review-surface text-status-review-foreground';
+    return 'bg-status-submitted-surface text-status-submitted-foreground';
   };
 
   return (
