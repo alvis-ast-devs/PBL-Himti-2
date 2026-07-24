@@ -70,11 +70,11 @@ export default function ViewTicket({ params }: { params: Promise<{ id: string }>
   return (
     <main className="min-h-screen bg-brand-pale text-ink relative">
       {/* Hero Section */}
-      <div 
-        className="w-full h-90 flex items-center justify-center relative "
-      >
+      <div className="w-full h-90 flex items-center relative">
         <div className="absolute inset-0 bg-brand-dark"></div>
-        <h1 className="relative z-10 text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">VIEW TICKET</h1>
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">VIEW TICKET</h1>
+        </div>
       </div>
 
       {/* Main Content Area */}

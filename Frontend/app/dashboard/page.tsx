@@ -55,12 +55,12 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-brand-pale text-ink relative">
-      {/* Hero Section with Image Background */}
-      <div
-        className="w-full h-90 flex items-center justify-center relative"
-      >
+      {/* Hero Section */}
+      <div className="w-full h-90 flex items-center relative">
         <div className="absolute inset-0 bg-brand-dark"></div>
-        <h1 className="relative z-10 text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">TICKETS</h1>
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl sm:text-5xl font-bold uppercase tracking-wide text-white">TICKETS</h1>
+        </div>
       </div>
 
       {/* Main Content Card (Connector) */}
@@ -81,7 +81,7 @@ export default function Dashboard() {
 
             <div className="p-4 flex-1">
               {pendingTickets.length === 0 ? (
-                <div className="text-center py-8 text-muted">
+                <div className="py-8 text-muted">
                   No pending tickets found.
                 </div>
               ) : (
@@ -121,7 +121,7 @@ export default function Dashboard() {
 
             <div className="p-4 flex-1">
               {processedTickets.length === 0 ? (
-                <div className="text-center py-8 text-muted">
+                <div className="py-8 text-muted">
                   No processed tickets found.
                 </div>
               ) : (
